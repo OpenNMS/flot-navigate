@@ -111,6 +111,10 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
             zoomRange: null, // or [number, number] (min range, max range)
             panRange: null // or [number, number] (min, max)
         },
+        yaxis: {
+            zoomRange: null, // or [number, number] (min range, max range)
+            panRange: null // or [number, number] (min, max)
+        },
         zoom: {
             interactive: false,
             trigger: "dblclick", // or "click" for single click
@@ -133,6 +137,11 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
             else
                 plot.zoom({ center: c });
         }
+
+        plot.rangesSet = function(args){
+            $.extend(true, options, args);
+            return options;
+        };
 
         function onMouseWheel(e, delta) {
             e.preventDefault();
@@ -204,7 +213,7 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
             args.amount = 1 / args.amount;
             plot.zoom(args);
         };
-        
+
         plot.zoom = function (args) {
             if (!args)
                 args = {};
@@ -230,11 +239,18 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
                 };
 
             $.each(plot.getAxes(), function(_, axis) {
-                var opts = axis.options,
+                var zr,pr, 
+                    opts = axis.options,
                     min = minmax[axis.direction].min,
-                    max = minmax[axis.direction].max,
-                    zr = opts.zoomRange,
-                    pr = opts.panRange;
+                    max = minmax[axis.direction].max;
+
+                    if(_ == 'xaxis') {
+                        zr = options.xaxis.zoomRange;
+                        pr = options.xaxis.panRange;
+                    } else {
+                        zr = options.yaxis.zoomRange;
+                        pr = options.yaxis.panRange;                       
+                    }
 
                 if (zr === false) // no zooming on this axis
                     return;
@@ -253,7 +269,7 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
                     if (pr[0] != null && min < pr[0]) {
                         min = pr[0];
                     }
-                    if (pr[1] != null && max > pr[1]) {Used to view the series data in
+                    if (pr[1] != null && max > pr[1]) {
                         max = pr[1];
                     }
                 }
@@ -287,13 +303,18 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
                 delta.y = 0;
 
             $.each(plot.getAxes(), function (_, axis) {
-                var opts = axis.options,
+                var pr,
+                    opts = axis.options,                    
                     min, max, d = delta[axis.direction];
 
                 min = axis.c2p(axis.p2c(axis.min) + d),
                 max = axis.c2p(axis.p2c(axis.max) + d);
+                    if(_ == 'xaxis') {
+                        pr = options.xaxis.panRange;
+                    } else {
+                        pr = options.yaxis.panRange;                       
+                    }
 
-                var pr = opts.panRange;
                 if (pr === false) // no panning on this axis
                     return;
                 
