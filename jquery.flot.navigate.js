@@ -103,7 +103,12 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
 (function(d){function e(a){var b=a||window.event,c=[].slice.call(arguments,1),f=0,e=0,g=0,a=d.event.fix(b);a.type="mousewheel";b.wheelDelta&&(f=b.wheelDelta/120);b.detail&&(f=-b.detail/3);g=f;void 0!==b.axis&&b.axis===b.HORIZONTAL_AXIS&&(g=0,e=-1*f);void 0!==b.wheelDeltaY&&(g=b.wheelDeltaY/120);void 0!==b.wheelDeltaX&&(e=-1*b.wheelDeltaX/120);c.unshift(a,f,e,g);return(d.event.dispatch||d.event.handle).apply(this,c)}var c=["DOMMouseScroll","mousewheel"];if(d.event.fixHooks)for(var h=c.length;h;)d.event.fixHooks[c[--h]]=d.event.mouseHooks;d.event.special.mousewheel={setup:function(){if(this.addEventListener)for(var a=c.length;a;)this.addEventListener(c[--a],e,!1);else this.onmousewheel=e},teardown:function(){if(this.removeEventListener)for(var a=c.length;a;)this.removeEventListener(c[--a],e,!1);else this.onmousewheel=null}};d.fn.extend({mousewheel:function(a){return a?this.bind("mousewheel",a):this.trigger("mousewheel")},unmousewheel:function(a){return this.unbind("mousewheel",a)}})})(jQuery);
 
 
-
+/*  in order to set zoom and pan ranges, each instance of Plot should be extended by
+*    instance.ranges = {
+*       yaxis: { panRange: [yaxis.min, yaxis.max], zoomRange: false}, 
+*       xaxis: { panRange: [from,to], zoomRange: null }
+*    };
+*/
 
 (function ($) {
     var options = {
@@ -137,11 +142,6 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
             else
                 plot.zoom({ center: c });
         }
-
-        plot.rangesSet = function(args){
-            $.extend(true, options, args);
-            return options;
-        };
 
         function onMouseWheel(e, delta) {
             e.preventDefault();
@@ -245,11 +245,11 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
                     max = minmax[axis.direction].max;
 
                     if(_ == 'xaxis') {
-                        zr = options.xaxis.zoomRange;
-                        pr = options.xaxis.panRange;
+                        zr = plot.ranges.xaxis.zoomRange;
+                        pr = plot.ranges.xaxis.panRange;
                     } else {
-                        zr = options.yaxis.zoomRange;
-                        pr = options.yaxis.panRange;                       
+                        zr = plot.ranges.yaxis.zoomRange;
+                        pr = plot.ranges.yaxis.panRange;                       
                     }
 
                 if (zr === false) // no zooming on this axis
@@ -310,11 +310,10 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
                 min = axis.c2p(axis.p2c(axis.min) + d),
                 max = axis.c2p(axis.p2c(axis.max) + d);
                     if(_ == 'xaxis') {
-                        pr = options.xaxis.panRange;
+                        pr = plot.ranges.xaxis.panRange;     
                     } else {
-                        pr = options.yaxis.panRange;                       
+                        pr = plot.ranges.yaxis.panRange;                       
                     }
-
                 if (pr === false) // no panning on this axis
                     return;
                 
