@@ -1,0 +1,11 @@
+{
+    "name": "flot.navigate",
+    "version": "1.3-CUSTOM",
+    "description": "Improved navigation for Flot",
+    "license": "MIT",
+    "main": "jquery.flot.navigate.js",
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/j-white/flot-navigate.git"
+    }
+}
