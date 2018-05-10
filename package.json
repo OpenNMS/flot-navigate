@@ -1,6 +1,6 @@
 {
     "name": "flot.navigate",
-    "version": "1.3-CUSTOM",
+    "version": "1.3.1-beta.0",
     "description": "Improved navigation for Flot",
     "license": "MIT",
     "main": "jquery.flot.navigate.js",
